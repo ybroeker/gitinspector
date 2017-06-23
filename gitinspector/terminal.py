@@ -115,6 +115,7 @@ def set_stdin_encoding():
 		sys.stdin = codecs.getreader("utf-8")(sys.stdin)
 
 def convert_command_line_to_utf8():
+	check_terminal_encoding()
 	try:
 		argv = []
 
