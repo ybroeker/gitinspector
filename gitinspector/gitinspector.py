@@ -29,7 +29,7 @@ from .changes import Changes
 from .config import GitConfig
 from .metrics import MetricsLogic
 from . import (basedir, clone, extensions, filtering, format, help, interval,
-               localization, optval, terminal, version)
+				localization, optval, terminal, version)
 from .output import outputable
 from .output.blameoutput import BlameOutput
 from .output.changesoutput import ChangesOutput
@@ -38,6 +38,7 @@ from .output.filteringoutput import FilteringOutput
 from .output.metricsoutput import MetricsOutput
 from .output.responsibilitiesoutput import ResponsibilitiesOutput
 from .output.timelineoutput import TimelineOutput
+import codecs
 
 localization.init()
 
@@ -98,31 +99,38 @@ class Runner(object):
 			os.chdir(previous_directory)
 		extensions.define(",".join(exts))
 
-		format.output_header(repos)
-		outputable.output(ChangesOutput(summed_changes))
+		output = format.output_header(repos)
+		output +=  outputable.output(ChangesOutput(summed_changes))
 		for changes in lang_changes:
-			pass#outputable.output(ChangesOutput(lang_changes[changes]))
+			pass#output += outputable.output(ChangesOutput(lang_changes[changes]))
 
 		if summed_changes.get_commits():
-			outputable.output(BlameOutput(summed_changes, summed_blames))
+			output += outputable.output(BlameOutput(summed_changes, summed_blames))
 			for ext in lang_changes:
-				outputable.output(BlameOutput(lang_changes[ext], lang_blames[ext], [ext]))
+				output += outputable.output(BlameOutput(lang_changes[ext], lang_blames[ext], [ext]))
 
 			if self.timeline:
-				outputable.output(TimelineOutput(summed_changes, self.useweeks))
+				output += outputable.output(TimelineOutput(summed_changes, self.useweeks))
 
 			if self.include_metrics:
-				outputable.output(MetricsOutput(summed_metrics))
+				output += outputable.output(MetricsOutput(summed_metrics))
 
 			if self.responsibilities:
-				outputable.output(ResponsibilitiesOutput(summed_changes, summed_blames))
+				output += outputable.output(ResponsibilitiesOutput(summed_changes, summed_blames))
 
-			outputable.output(FilteringOutput())
+			output += outputable.output(FilteringOutput())
 
 			if self.list_file_types:
-				outputable.output(ExtensionsOutput())
+				output += outputable.output(ExtensionsOutput())
 
-		format.output_footer()
+		output += format.output_footer()
+		if self.outfile:
+			file = codecs.open(self.outfile, "w", "utf-8")
+			#file = open(self.outfile, 'w')
+			file.write(output)
+			file.close()
+		else:
+			print(output)
 		os.chdir(previous_directory)
 
 def __check_python_version__():
@@ -156,10 +164,10 @@ def main():
 	repos = []
 
 	try:
-		opts, args = optval.gnu_getopt(argv[1:], "f:F:hHlLmrTwx:", ["exclude=", "file-types=", "format=",
+		opts, args = optval.gnu_getopt(argv[1:], "f:F:hHlLmrTwx:o:", ["exclude=", "file-types=", "format=",
 		                                         "hard:true", "help", "list-file-types:true", "localize-output:true",
 		                                         "metrics:true", "responsibilities:true", "since=", "grading:true",
-		                                         "timeline:true", "until=", "version", "weeks:true"])
+		                                         "timeline:true", "until=", "version", "weeks:true","outfile="])
 		repos = __get_validated_git_repos__(set(args))
 
 		#We need the repos above to be set before we read the git config.
@@ -224,6 +232,8 @@ def main():
 					clear_x_on_next_pass = False
 					filtering.clear()
 				filtering.add(a)
+			elif o in("-o", "--outfile"):
+				run.outfile = a
 
 		__check_python_version__()
 		run.process(repos)

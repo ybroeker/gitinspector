@@ -44,4 +44,4 @@ def output(outputable):
 		outputable.output_text()
 	else:
 		output = outputable.output_xml()
-	print(output)
+	return output
