@@ -44,7 +44,7 @@
 					}}).hide();
 				}}
 
-				$("table#changes tbody tr td:last-child").filter(function() {{
+				$("table[id^=changes] tbody tr td:last-child").filter(function() {{
 					return parseFloat(this.innerHTML) < MINOR_AUTHOR_PERCENTAGE;
 				}}).parent().hide();
 
@@ -54,7 +54,7 @@
 
 				$("table.git tbody tr:visible").each(colorRows);
 
-				$("table#changes, table#blame").tablesorter({{
+				$("table[id^=changes], table[id^=blame]").tablesorter({{
 					sortList: [[0,0]],
 					headers: {{
 						0: {{ sorter: "text" }}
@@ -63,7 +63,7 @@
 					$(this).find("tbody tr:visible").each(colorRows);
 				}});
 
-				$("table#changes thead tr th, table#blame thead tr th").click(function() {{
+				$("table[id^=changes] thead tr th, table#blame thead tr th").click(function() {{
 					$(this).parent().find("th strong").remove();
 					var parentIndex = $(this).index();
 
@@ -75,7 +75,7 @@
 					this.isReversed = !this.isReversed;
 				}});
 
-				$("table#changes thead tr th:first-child, table#blame thead tr th:first-child").each(function() {{
+				$("table[id^=changes] thead tr th:first-child, table#blame thead tr th:first-child").each(function() {{
 					this.isReversed = true;
 					$(this).append("<strong> &or;</strong>");
 				}});
@@ -139,7 +139,7 @@
 					}});
 				}}
 
-				$("#blame_chart, #changes_chart").bind("plothover", function(event, pos, obj) {{
+				$("[id^=blame_chart], [id^=changes_chart]").bind("plothover", function(event, pos, obj) {{
 					if (obj) {{
 						var selection = "table tbody tr td:contains(\"" + obj.series.label + "\")";
 						var element = $(this).parent().find(selection);

@@ -30,7 +30,10 @@ from .outputable import Outputable
 BLAME_INFO_TEXT = N_("Below are the number of rows from each author that have survived and are still "
                      "intact in the current revision")
 
+
+
 class BlameOutput(Outputable):
+	charts = 0
 	def __init__(self, changes, blame):
 		if format.is_interactive_format():
 			print("")
@@ -74,9 +77,9 @@ class BlameOutput(Outputable):
 				chart_data += ", "
 
 		blame_xml += "<tfoot><tr> <td colspan=\"6\">&nbsp;</td> </tr></tfoot></tbody></table>"
-		blame_xml += "<div class=\"chart\" id=\"blame_chart\"></div></div>"
+		blame_xml += "<div class=\"chart\" id=\"blame_chart_{0}\"></div></div>".format(BlameOutput.charts)
 		blame_xml += "<script type=\"text/javascript\">"
-		blame_xml += "    blame_plot = $.plot($(\"#blame_chart\"), [{0}], {{".format(chart_data)
+		blame_xml += "    blame_plot = $.plot($(\"#blame_chart_{1}\"), [{0}], {{".format(chart_data,BlameOutput.charts)
 		blame_xml += "        series: {"
 		blame_xml += "            pie: {"
 		blame_xml += "                innerRadius: 0.4,"
@@ -91,6 +94,8 @@ class BlameOutput(Outputable):
 		blame_xml += "        }"
 		blame_xml += "    });"
 		blame_xml += "</script></div></div>"
+		
+		BlameOutput.charts += 1		
 
 		print(blame_xml)
 

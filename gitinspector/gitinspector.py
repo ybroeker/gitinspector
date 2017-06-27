@@ -23,6 +23,7 @@ import atexit
 import getopt
 import os
 import sys
+import pprint
 from .blame import Blame
 from .changes import Changes
 from .config import GitConfig
@@ -54,6 +55,7 @@ class Runner(object):
 	def process(self, repos):
 		localization.check_compatibility(version.__version__)
 
+
 		if not self.localize_output:
 			localization.disable()
 
@@ -63,6 +65,7 @@ class Runner(object):
 		summed_blames = Blame.__new__(Blame)
 		summed_changes = Changes.__new__(Changes)
 		summed_metrics = MetricsLogic.__new__(MetricsLogic)
+		
 
 		for repo in repos:
 			os.chdir(repo.location)
@@ -79,11 +82,31 @@ class Runner(object):
 		else:
 			os.chdir(previous_directory)
 
+
+		exts = extensions.get()#define(a)
+		lang_blames = {}#Blame.__new__(Blame)
+		lang_changes = {}#Changes.__new__(Changes)
+		for ext in exts:
+			extensions.define(ext)			
+			lang_blames[ext] = Blame.__new__(Blame)
+			lang_changes[ext] = Changes.__new__(Changes)
+			os.chdir(repos[0].location)
+			changes = Changes(repo, self.hard)
+			lang_blames[ext] += Blame(repo, self.hard, self.useweeks, changes)
+			lang_changes[ext] += changes
+		else:
+			os.chdir(previous_directory)
+		extensions.define(",".join(exts))
+
 		format.output_header(repos)
 		outputable.output(ChangesOutput(summed_changes))
+		for changes in lang_changes:
+			pass#outputable.output(ChangesOutput(lang_changes[changes]))
 
 		if summed_changes.get_commits():
 			outputable.output(BlameOutput(summed_changes, summed_blames))
+			for ext in lang_changes:
+				outputable.output(BlameOutput(lang_changes[ext], lang_blames[ext]))
 
 			if self.timeline:
 				outputable.output(TimelineOutput(summed_changes, self.useweeks))

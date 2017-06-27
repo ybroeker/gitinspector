@@ -39,3 +39,6 @@ def add_located(string):
 
 def get_located():
 	return __located_extensions__
+
+class Extensions():
+	extensions = []
