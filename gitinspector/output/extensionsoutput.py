@@ -49,7 +49,8 @@ class ExtensionsOutput(Outputable):
 				extensions_xml += " "
 
 			extensions_xml += "</p></div></div>"
-			print(extensions_xml)
+			return extensions_xml
+		return ""
 
 	def output_json(self):
 		if extensions.__located_extensions__:
@@ -66,8 +67,9 @@ class ExtensionsOutput(Outputable):
 			used_extensions_json = used_extensions_json[:-2]
 			unused_extensions_json = unused_extensions_json[:-2]
 
-			print(",\n\t\t\"extensions\": {\n" + message_json + "\t\t\t\"used\": [ " + used_extensions_json +
-			      " ],\n\t\t\t\"unused\": [ " + unused_extensions_json + " ]\n" + "\t\t}", end="")
+			return ",\n\t\t\"extensions\": {\n" + message_json + "\t\t\t\"used\": [ " + used_extensions_json + \
+			      " ],\n\t\t\t\"unused\": [ " + unused_extensions_json + " ]\n" + "\t\t}"
+		return ""
 
 	def output_text(self):
 		if extensions.__located_extensions__:
@@ -93,5 +95,6 @@ class ExtensionsOutput(Outputable):
 				else:
 					unused_extensions_xml += "\t\t\t<extension>" + i + "</extension>\n"
 
-			print("\t<extensions>\n" + message_xml + "\t\t<used>\n" + used_extensions_xml + "\t\t</used>\n" +
-			      "\t\t<unused>\n" + unused_extensions_xml + "\t\t</unused>\n" + "\t</extensions>")
+			return "\t<extensions>\n" + message_xml + "\t\t<used>\n" + used_extensions_xml + "\t\t</used>\n" + \
+			      "\t\t<unused>\n" + unused_extensions_xml + "\t\t</unused>\n" + "\t</extensions>\n"
+		return ""

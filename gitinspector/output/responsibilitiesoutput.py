@@ -26,8 +26,8 @@ from .. import responsibilities as resp
 from .outputable import Outputable
 
 RESPONSIBILITIES_INFO_TEXT = N_("The following responsibilities, by author, were found in the current "
-                                "revision of the repository (comments are excluded from the line count, "
-                                "if possible)")
+								"revision of the repository (comments are excluded from the line count, "
+								"if possible)")
 MOSTLY_RESPONSIBLE_FOR_TEXT = N_("is mostly responsible for")
 
 class ResponsibilitiesOutput(Outputable):
@@ -80,7 +80,7 @@ class ResponsibilitiesOutput(Outputable):
 
 				resp_xml += "</div>"
 		resp_xml += "</div></div>"
-		print(resp_xml)
+		return resp_xml
 
 	def output_json(self):
 		message_json = "\t\t\t\"message\": \"" + _(RESPONSIBILITIES_INFO_TEXT) + "\",\n"
@@ -111,7 +111,8 @@ class ResponsibilitiesOutput(Outputable):
 				resp_json += "]\n\t\t\t},"
 
 		resp_json = resp_json[:-1]
-		print(",\n\t\t\"responsibilities\": {\n" + message_json + "\t\t\t\"authors\": [\n\t\t\t" + resp_json + "]\n\t\t}", end="")
+
+		return ",\n\t\t\"responsibilities\": {\n" + message_json + "\t\t\t\"authors\": [\n\t\t\t" + resp_json + "]\n\t\t}"
 
 	def output_xml(self):
 		message_xml = "\t\t<message>" + _(RESPONSIBILITIES_INFO_TEXT) + "</message>\n"
@@ -140,4 +141,4 @@ class ResponsibilitiesOutput(Outputable):
 				resp_xml += "\t\t\t\t</files>\n"
 				resp_xml += "\t\t\t</author>\n"
 
-		print("\t<responsibilities>\n" + message_xml + "\t\t<authors>\n" + resp_xml + "\t\t</authors>\n\t</responsibilities>")
+		return "\t<responsibilities>\n" + message_xml + "\t\t<authors>\n" + resp_xml + "\t\t</authors>\n\t</responsibilities>"

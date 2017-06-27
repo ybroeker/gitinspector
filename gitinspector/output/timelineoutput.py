@@ -94,7 +94,7 @@ def __output_row__html__(timeline_data, periods, names):
 		timeline_xml += "<td>" + str(total_changes[2]) + "</td>"
 
 	timeline_xml += "</tr></tfoot></tbody></table>"
-	print(timeline_xml)
+	return timeline_xml
 
 class TimelineOutput(Outputable):
 	def __init__(self, changes, useweeks):
@@ -116,6 +116,7 @@ class TimelineOutput(Outputable):
 				__output_row__text__(timeline_data, periods[i:i+max_periods_per_row], names)
 
 	def output_html(self):
+		timeline_xml = ""
 		if self.changes.get_commits():
 			timeline_data = timeline.TimelineData(self.changes, self.useweeks)
 			periods = timeline_data.get_periods()
@@ -124,13 +125,12 @@ class TimelineOutput(Outputable):
 
 			timeline_xml = "<div><div id=\"timeline\" class=\"box\">"
 			timeline_xml += "<p>" + _(TIMELINE_INFO_TEXT) + ".</p>"
-			print(timeline_xml)
 
 			for i in range(0, len(periods), max_periods_per_row):
-				__output_row__html__(timeline_data, periods[i:i+max_periods_per_row], names)
+				timeline_xml+=__output_row__html__(timeline_data, periods[i:i+max_periods_per_row], names)
 
-			timeline_xml = "</div></div>"
-			print(timeline_xml)
+			timeline_xml += "</div></div>"
+		return timeline_xml
 
 	def output_json(self):
 		if self.changes.get_commits():
@@ -170,8 +170,8 @@ class TimelineOutput(Outputable):
 			else:
 				timeline_json = timeline_json[:-1]
 
-			print(",\n\t\t\"timeline\": {\n" + message_json + periods_json + timeline_json + "]\n\t\t}", end="")
-
+			return ",\n\t\t\"timeline\": {\n" + message_json + periods_json + timeline_json + "]\n\t\t}"
+		return ""
 	def output_xml(self):
 		if self.changes.get_commits():
 			message_xml = "\t\t<message>" + _(TIMELINE_INFO_TEXT) + "</message>\n"
@@ -205,4 +205,5 @@ class TimelineOutput(Outputable):
 				                    str(timeline_data.get_total_changes_in_period(period)[2]) + "</modified_rows>\n"
 				timeline_xml += "\t\t\t<period>\n" + name_xml + authors_xml + modified_rows_xml + "\t\t\t</period>\n"
 
-			print("\t<timeline>\n" + message_xml + periods_xml + timeline_xml + "\t\t</periods>\n\t</timeline>")
+			return "\t<timeline>\n" + message_xml + periods_xml + timeline_xml + "\t\t</periods>\n\t</timeline>"
+		return ""

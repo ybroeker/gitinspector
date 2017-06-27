@@ -35,11 +35,13 @@ class Outputable(object):
 		raise NotImplementedError(_("XML output not yet supported in") + " \"" + self.__class__.__name__ + "\".")
 
 def output(outputable):
+	output = ""
 	if format.get_selected() == "html" or format.get_selected() == "htmlembedded":
-		outputable.output_html()
+		output = outputable.output_html()
 	elif format.get_selected() == "json":
-		outputable.output_json()
+		output = outputable.output_json()
 	elif format.get_selected() == "text":
 		outputable.output_text()
 	else:
-		outputable.output_xml()
+		output = outputable.output_xml()
+	print(output)

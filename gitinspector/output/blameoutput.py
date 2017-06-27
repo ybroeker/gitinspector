@@ -47,6 +47,11 @@ class BlameOutput(Outputable):
 		Outputable.__init__(self)
 
 	def output_html(self):
+		blames = sorted(self.blame.get_summed_blames().items())
+		total_blames = 0
+
+		if not blames: return ""
+
 		blame_xml = "<div><div class=\"box\">"
 
 		if not len(self.extensions):
@@ -60,10 +65,6 @@ class BlameOutput(Outputable):
 		             _("Author"), _("Rows"), _("Stability"), _("Age"), _("% in comments"), _("% of Work"))
 		blame_xml += "<tbody>"
 		chart_data = ""
-		blames = sorted(self.blame.get_summed_blames().items())
-		total_blames = 0
-
-		if not blames: return
 
 		for i in blames:
 			total_blames += i[1].rows
@@ -110,7 +111,7 @@ class BlameOutput(Outputable):
 
 		BlameOutput.charts += 1
 
-		print(blame_xml)
+		return blame_xml
 
 	def output_json(self):
 		message_json = "\t\t\t\"message\": \"" + _(BLAME_INFO_TEXT) + "\",\n"
@@ -133,7 +134,7 @@ class BlameOutput(Outputable):
 		else:
 			blame_json = blame_json[:-1]
 
-		print(",\n\t\t\"blame\": {\n" + message_json + "\t\t\t\"authors\": [\n\t\t\t" + blame_json + "]\n\t\t}", end="")
+		return ",\n\t\t\"blame\": {\n" + message_json + "\t\t\t\"authors\": [\n\t\t\t" + blame_json + "]\n\t\t}"
 
 	def output_text(self):
 		if sys.stdout.isatty() and format.is_interactive_format():
@@ -169,4 +170,4 @@ class BlameOutput(Outputable):
 			blame_xml += ("\t\t\t<author>\n" + name_xml + email_xml + gravatar_xml + rows_xml + stability_xml +
 			              age_xml + percentage_in_comments_xml + "\t\t\t</author>\n")
 
-		print("\t<blame>\n" + message_xml + "\t\t<authors>\n" + blame_xml + "\t\t</authors>\n\t</blame>")
+		return blame_xml

@@ -93,7 +93,7 @@ class ChangesOutput(Outputable):
 			changes_xml += "<p>" + _(NO_COMMITED_FILES_TEXT) + ".</p>"
 
 		changes_xml += "</div></div>"
-		print(changes_xml)
+		return changes_xml
 
 	def output_json(self):
 		authorinfo_list = self.changes.get_authorinfo_list()
@@ -126,9 +126,9 @@ class ChangesOutput(Outputable):
 			else:
 				changes_json = changes_json[:-1]
 
-			print("\t\t\"changes\": {\n" + message_json + "\t\t\t\"authors\": [\n\t\t\t" + changes_json + "]\n\t\t}", end="")
+			return "\t\t\"changes\": {\n" + message_json + "\t\t\t\"authors\": [\n\t\t\t" + changes_json + "]\n\t\t}"
 		else:
-			print("\t\t\"exception\": \"" + _(NO_COMMITED_FILES_TEXT) + "\"")
+			return "\t\t\"exception\": \"" + _(NO_COMMITED_FILES_TEXT) + "\""
 
 	def output_text(self):
 		authorinfo_list = self.changes.get_authorinfo_list()
@@ -184,6 +184,6 @@ class ChangesOutput(Outputable):
 				changes_xml += ("\t\t\t<author>\n" + name_xml + email_xml + gravatar_xml + commits_xml +
 				                insertions_xml + deletions_xml + percentage_xml + "\t\t\t</author>\n")
 
-			print("\t<changes>\n" + message_xml + "\t\t<authors>\n" + changes_xml + "\t\t</authors>\n\t</changes>")
+			return "\t<changes>\n" + message_xml + "\t\t<authors>\n" + changes_xml + "\t\t</authors>\n\t</changes>"
 		else:
-			print("\t<changes>\n\t\t<exception>" + _(NO_COMMITED_FILES_TEXT) + "</exception>\n\t</changes>")
+			return "\t<changes>\n\t\t<exception>" + _(NO_COMMITED_FILES_TEXT) + "</exception>\n\t</changes>"
