@@ -26,31 +26,44 @@ from ..localization import N_
 from .. import format, gravatar, terminal
 from ..blame import Blame
 from .outputable import Outputable
+from .. import  extensions
 
 BLAME_INFO_TEXT = N_("Below are the number of rows from each author that have survived and are still "
-                     "intact in the current revision")
-
+						"intact in the current revision")
+BLAME_INFO_TEXT_FILES = N_("Below are the number of rows from each author that have survived and are still "
+						"intact in the current revision with extension: ")
 
 
 class BlameOutput(Outputable):
 	charts = 0
-	def __init__(self, changes, blame):
+	def __init__(self, changes, blame, exts=[]):
 		if format.is_interactive_format():
 			print("")
 
 		self.changes = changes
 		self.blame = blame
+		self.extensions = exts
+
 		Outputable.__init__(self)
 
 	def output_html(self):
 		blame_xml = "<div><div class=\"box\">"
-		blame_xml += "<p>" + _(BLAME_INFO_TEXT) + ".</p><div><table id=\"blame\" class=\"git\">"
+
+		if not len(self.extensions):
+			blame_xml += "<p>" + _(BLAME_INFO_TEXT)
+		else :
+			blame_xml += "<p>" + _(BLAME_INFO_TEXT_FILES)
+			blame_xml += ", ".join([ "<i>"+ext+"</i>" for ext in self.extensions])
+
+		blame_xml += "</p><div><table id=\"blame\" class=\"git\">"
 		blame_xml += "<thead><tr> <th>{0}</th> <th>{1}</th> <th>{2}</th> <th>{3}</th> <th>{4}</th> <th>{5}</th> </tr></thead>".format(
 		             _("Author"), _("Rows"), _("Stability"), _("Age"), _("% in comments"), _("% of Work"))
 		blame_xml += "<tbody>"
 		chart_data = ""
 		blames = sorted(self.blame.get_summed_blames().items())
 		total_blames = 0
+
+		if not blames: return
 
 		for i in blames:
 			total_blames += i[1].rows
@@ -94,8 +107,8 @@ class BlameOutput(Outputable):
 		blame_xml += "        }"
 		blame_xml += "    });"
 		blame_xml += "</script></div></div>"
-		
-		BlameOutput.charts += 1		
+
+		BlameOutput.charts += 1
 
 		print(blame_xml)
 

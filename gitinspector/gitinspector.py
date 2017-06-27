@@ -65,7 +65,7 @@ class Runner(object):
 		summed_blames = Blame.__new__(Blame)
 		summed_changes = Changes.__new__(Changes)
 		summed_metrics = MetricsLogic.__new__(MetricsLogic)
-		
+
 
 		for repo in repos:
 			os.chdir(repo.location)
@@ -83,11 +83,11 @@ class Runner(object):
 			os.chdir(previous_directory)
 
 
-		exts = extensions.get()#define(a)
-		lang_blames = {}#Blame.__new__(Blame)
-		lang_changes = {}#Changes.__new__(Changes)
+		exts = extensions.get()
+		lang_blames = {}
+		lang_changes = {}
 		for ext in exts:
-			extensions.define(ext)			
+			extensions.define(ext)
 			lang_blames[ext] = Blame.__new__(Blame)
 			lang_changes[ext] = Changes.__new__(Changes)
 			os.chdir(repos[0].location)
@@ -106,7 +106,7 @@ class Runner(object):
 		if summed_changes.get_commits():
 			outputable.output(BlameOutput(summed_changes, summed_blames))
 			for ext in lang_changes:
-				outputable.output(BlameOutput(lang_changes[ext], lang_blames[ext]))
+				outputable.output(BlameOutput(lang_changes[ext], lang_blames[ext], [ext]))
 
 			if self.timeline:
 				outputable.output(TimelineOutput(summed_changes, self.useweeks))
