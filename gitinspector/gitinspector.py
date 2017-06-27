@@ -164,7 +164,7 @@ def main():
 	repos = []
 
 	try:
-		opts, args = optval.gnu_getopt(argv[1:], "f:F:hHlLmrTwx:o:", ["exclude=", "file-types=", "format=",
+		opts, args = optval.gnu_getopt(argv[1:], "f:F:hHlLmrTwx:o:i", ["exclude=", "file-types=", "format=",
 		                                         "hard:true", "help", "list-file-types:true", "localize-output:true",
 		                                         "metrics:true", "responsibilities:true", "since=", "grading:true",
 		                                         "timeline:true", "until=", "version", "weeks:true","outfile="])
@@ -183,6 +183,8 @@ def main():
 			elif o in("-F", "--format"):
 				if not format.select(a):
 					raise format.InvalidFormatError(_("specified output format not supported."))
+			elif o in("-i"):
+				format.set_interactive()
 			elif o == "-H":
 				run.hard = True
 			elif o == "--hard":

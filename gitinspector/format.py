@@ -32,23 +32,29 @@ __available_formats__ = ["html", "htmlembedded", "json", "text", "xml"]
 DEFAULT_FORMAT = __available_formats__[3]
 
 __selected_format__ = DEFAULT_FORMAT
+__interactive_format__ = False
 
 class InvalidFormatError(Exception):
 	def __init__(self, msg):
 		super(InvalidFormatError, self).__init__(msg)
 		self.msg = msg
 
-def select(format):
+def select(format, interactive=False):
 	global __selected_format__
 	__selected_format__ = format
+	__interactive_format__ = interactive or (__selected_format__ == "text")
 
 	return format in __available_formats__
+
+def set_interactive():
+	global __interactive_format__
+	__interactive_format__ = True
 
 def get_selected():
 	return __selected_format__
 
 def is_interactive_format():
-	return __selected_format__ == "text"
+	return __interactive_format__
 
 def __output_html_template__(name):
 	template_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), name)
