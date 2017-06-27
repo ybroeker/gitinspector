@@ -42,8 +42,8 @@ class BlameOutput(Outputable):
 	def output_html(self):
 		blame_xml = "<div><div class=\"box\">"
 		blame_xml += "<p>" + _(BLAME_INFO_TEXT) + ".</p><div><table id=\"blame\" class=\"git\">"
-		blame_xml += "<thead><tr> <th>{0}</th> <th>{1}</th> <th>{2}</th> <th>{3}</th> <th>{4}</th> </tr></thead>".format(
-		             _("Author"), _("Rows"), _("Stability"), _("Age"), _("% in comments"))
+		blame_xml += "<thead><tr> <th>{0}</th> <th>{1}</th> <th>{2}</th> <th>{3}</th> <th>{4}</th> <th>{5}</th> </tr></thead>".format(
+		             _("Author"), _("Rows"), _("Stability"), _("Age"), _("% in comments"), _("% of Work"))
 		blame_xml += "<tbody>"
 		chart_data = ""
 		blames = sorted(self.blame.get_summed_blames().items())
@@ -66,14 +66,14 @@ class BlameOutput(Outputable):
 			blame_xml += "<td>" + ("{0:.1f}".format(Blame.get_stability(entry[0], entry[1].rows, self.changes)) + "</td>")
 			blame_xml += "<td>" + "{0:.1f}".format(float(entry[1].skew) / entry[1].rows) + "</td>"
 			blame_xml += "<td>" + "{0:.2f}".format(100.0 * entry[1].comments / entry[1].rows) + "</td>"
-			blame_xml += "<td style=\"display: none\">" + work_percentage + "</td>"
+			blame_xml += "<td>" + work_percentage + "</td>"
 			blame_xml += "</tr>"
 			chart_data += "{{label: {0}, data: {1}}}".format(json.dumps(entry[0]), work_percentage)
 
 			if blames[-1] != entry:
 				chart_data += ", "
 
-		blame_xml += "<tfoot><tr> <td colspan=\"5\">&nbsp;</td> </tr></tfoot></tbody></table>"
+		blame_xml += "<tfoot><tr> <td colspan=\"6\">&nbsp;</td> </tr></tfoot></tbody></table>"
 		blame_xml += "<div class=\"chart\" id=\"blame_chart\"></div></div>"
 		blame_xml += "<script type=\"text/javascript\">"
 		blame_xml += "    blame_plot = $.plot($(\"#blame_chart\"), [{0}], {{".format(chart_data)
