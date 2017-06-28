@@ -52,6 +52,7 @@ class Runner(object):
 		self.grading = False
 		self.timeline = False
 		self.useweeks = False
+		self.outfile = ""
 
 	def process(self, repos):
 		localization.check_compatibility(version.__version__)
