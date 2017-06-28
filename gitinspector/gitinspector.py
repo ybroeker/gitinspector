@@ -102,8 +102,8 @@ class Runner(object):
 
 		output = format.output_header(repos)
 		output +=  outputable.output(ChangesOutput(summed_changes))
-		for changes in lang_changes:
-			pass#output += outputable.output(ChangesOutput(lang_changes[changes]))
+		for ext in lang_changes:
+			output += outputable.output(ChangesOutput(lang_changes[ext],[ext]))
 
 		if summed_changes.get_commits():
 			output += outputable.output(BlameOutput(summed_changes, summed_blames))

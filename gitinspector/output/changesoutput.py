@@ -27,13 +27,17 @@ from .outputable import Outputable
 
 HISTORICAL_INFO_TEXT = N_("The following historical commit information, by author, was found")
 NO_COMMITED_FILES_TEXT = N_("No commited files with the specified extensions were found")
+HISTORICAL_INFO_TEXT_FILES = N_("The following historical commit information, by author, was found for extension: ")
 
 class ChangesOutput(Outputable):
-	def __init__(self, changes):
+	charts = 0
+	def __init__(self, changes, exts=[]):
 		self.changes = changes
+		self.extensions = exts
 		Outputable.__init__(self)
 
 	def output_html(self):
+		if not self.changes.commits: return ""
 		authorinfo_list = self.changes.get_authorinfo_list()
 		total_changes = 0.0
 		changes_xml = "<div><div class=\"box\">"
@@ -44,7 +48,13 @@ class ChangesOutput(Outputable):
 			total_changes += authorinfo_list.get(i).deletions
 
 		if authorinfo_list:
-			changes_xml += "<p>" + _(HISTORICAL_INFO_TEXT) + ".</p><div><table id=\"changes\" class=\"git\">"
+			changes_xml += "<p>"
+			if not self.extensions:
+				changes_xml +=_(HISTORICAL_INFO_TEXT)
+			else:
+				changes_xml += _(HISTORICAL_INFO_TEXT_FILES) + ", ".join([ "<i>"+ext+"</i>" for ext in self.extensions])
+
+			changes_xml += ".</p><div><table id=\"changes\" class=\"git\">"
 			changes_xml += "<thead><tr> <th>{0}</th> <th>{1}</th> <th>{2}</th> <th>{3}</th> <th>{4}</th>".format(
 			               _("Author"), _("Commits"), _("Insertions"), _("Deletions"), _("% of changes"))
 			changes_xml += "</tr></thead><tbody>"
@@ -72,9 +82,9 @@ class ChangesOutput(Outputable):
 					chart_data += ", "
 
 			changes_xml += ("<tfoot><tr> <td colspan=\"5\">&nbsp;</td> </tr></tfoot></tbody></table>")
-			changes_xml += "<div class=\"chart\" id=\"changes_chart\"></div></div>"
+			changes_xml += "<div class=\"chart\" id=\"changes_chart{0}\"></div></div>".format(ChangesOutput.charts)
 			changes_xml += "<script type=\"text/javascript\">"
-			changes_xml += "    changes_plot = $.plot($(\"#changes_chart\"), [{0}], {{".format(chart_data)
+			changes_xml += "    changes_plot = $.plot($(\"#changes_chart{1}\"), [{0}], {{".format(chart_data,ChangesOutput.charts)
 			changes_xml += "        series: {"
 			changes_xml += "            pie: {"
 			changes_xml += "                innerRadius: 0.4,"
@@ -89,6 +99,8 @@ class ChangesOutput(Outputable):
 			changes_xml += "        }"
 			changes_xml += "    });"
 			changes_xml += "</script>"
+
+			ChangesOutput.charts += 1
 		else:
 			changes_xml += "<p>" + _(NO_COMMITED_FILES_TEXT) + ".</p>"
 
